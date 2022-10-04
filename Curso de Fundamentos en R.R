@@ -85,7 +85,7 @@ head(df1)
 tail(df1)
 tail(df2)
 
-#13. Utilizando la libreria dplyr y estructuras de datos####
+####13. Utilizando la libreria dplyr y estructuras de datos####
 glimpse(df1)
 my_vector <- 1:8
 my_matrix <- matrix(1:9, ncol = 3)
@@ -93,5 +93,114 @@ my_df <- df2[1:4,]
 my_list <- list(my_vector,my_matrix,my_df)
 my_list[[2]]
 
+####EDA Scatter plot mtcars####
+plot(mtcars$mpg ~ mtcars$hp, xlab = "Caballos de fuerza",
+     ylab = "Millas por galon", main = "Relacion cilindros y millas por galon")
+
+plot(df2$mpg ~ df2$cyl, xlab = "Caballos de fuerza",
+     ylab = "Millas por galon", main = "Relacion cilindros y caballos de fuerza")
+
+####EDA Scatter plot economia naranja####
+plot(df1$Unemployment ~ df1$Education.invest...GDP, 
+     xlab = "Inversión educacion % PIB",
+     ylab = "Desempleo",
+     main = "Relacion educacion y desempleo")
+
+plot(df1$GDP.PC ~ df1$Creat.Ind...GDP, 
+     xlab = "Aporte EN al PIB %",
+     ylab = "PIB percápita",
+     main = "Relacion EN y PIB percapita")
+
+####Histogramas mtcars qplot####
+qplot(mtcars$hp, geom = "histogram",
+      xlab = "Caballos de fuerza",
+      main = "Vehiculos segun caballos de fuerza")
+
+ggplot(mtcars, aes(x=hp))+ geom_histogram()+
+  labs(x = "Caballos de fuerza", y = "Cantidad de vehiculos",
+       title = "Caballos de fuerza en vehiculos")+
+  theme(legend.position = "none")+
+  theme(panel.background = element_blank(), panel.grid = element_blank(),
+        panel.grid.minor = element_blank())
+
+ggplot(mtcars, aes(x=hp))+ geom_histogram(binwidth = 30)+
+  labs(x = "Caballos de fuerza", y = "Cantidad de vehiculos",
+       title = "Caballos de fuerza en vehiculos")+
+  theme(legend.position = "none")+
+  theme(panel.background = element_blank(), panel.grid = element_blank(),
+        panel.grid.minor = element_blank())
+
+ggplot()+geom_histogram(data = mtcars,
+                        aes(x=hp), fill="darkblue", color="black",
+                        binwidth = 20)+
+  labs(x = "Caballos de fuerza", y = "Cantidad de vehiculos",
+       title = "Caballos de fuerza en vehiculos")+
+  xlim(c(80,280))+ theme(legend.position = "none")+
+  theme(panel.background = element_blank(), 
+        panel.grid = element_blank(),
+        panel.grid.minor = element_blank())
+
+####Histograma con ggplot EN####
+ggplot()+geom_histogram(data = df1,
+                        aes(x=GDP.PC), fill="darkgreen", color="black",
+                        binwidth = 2000)+
+  labs(x = "PIB percápita", y = "Cantidad de países",
+       title = "PIB percápita en paises latam")+
+  theme(legend.position = "none")+
+  theme(panel.background = element_blank(), 
+        panel.grid = element_blank(),
+        panel.grid.minor = element_blank())
 
 
+ggplot()+geom_histogram(data = df1,
+                        aes(x=Creat.Ind...GDP), fill="darkgreen", color="black",
+                        binwidth = 1)+
+  labs(x = "Aporte EN al PIB (%)", y = "Cantidad de países",
+       title = "Contribución EN al PIB en países LATAM")+
+  theme(legend.position = "none")+
+  theme(panel.background = element_blank(), 
+        panel.grid = element_blank(),
+        panel.grid.minor = element_blank())
+
+ggplot()+geom_histogram(data = df1,
+                        aes(x=Internet.penetration...population), 
+                        fill="darkgreen", color="black",
+                        binwidth = 5)+
+  labs(x = "Penetración internet como (%) población", 
+       y = "Cantidad de países",
+       title = "Penetración de internet en países LATAM")+
+  theme(legend.position = "none")+
+  theme(panel.background = element_blank(), 
+        panel.grid = element_blank(),
+        panel.grid.minor = element_blank())+
+  scale_x_continuous(breaks = seq(40,100,5))
+
+####Box plot mtcars####
+boxplot(mtcars$hp, ylab= "Caballos de fuerza",
+        main="Caballos de fuerza en vehículos")
+
+ggplot(mtcars, aes(x=as.factor(cyl), y=hp, fill=cyl))+
+  geom_boxplot(alpha=0.5)+
+  labs(x="Cilindros", y="Caballos de fuerza",
+       title = "Caballos de fuerza según cilindros")+
+  theme(legend.position = "none")+
+  theme(panel.background = element_blank(), 
+        panel.grid = element_blank(),
+        panel.grid.minor = element_blank())
+
+ggplot(mtcars,aes(x=am, y=mpg, fill=am))+
+  geom_boxplot()+
+  labs(x="Tipo de caja", y="Millas por galon",
+       title= "Millas por galon según tipo de caja" )+
+  theme(legend.position = "none")+
+  theme(panel.background = element_blank(), 
+        panel.grid = element_blank(),
+        panel.grid.minor = element_blank())
+
+mtcars$am <- factor(mtcars$am, levels =c(TRUE, FALSE),
+                    labels = c("Manual", "Automático"))
+
+
+
+  
+  
