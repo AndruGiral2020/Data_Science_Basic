@@ -219,6 +219,65 @@ mtcars$am <- factor(mtcars$am, levels =c(TRUE, FALSE),
                     labels = c("Manual", "Automático"))
 
 
+####Boxplot EN PIB percapita####
+install.packages("dyplr")
+library(dplyr)
+economy <- mean(df1$GDP.PC)
+df1 <- df1 %>% mutate(strong_economy = ifelse(GDP.PC<economy,
+                                              "Por debajo del promedio PIB percapita",
+                                              "Sobre el promedio PIB percapita"))
 
+ggplot(df1, aes(x=strong_economy, y=Creat.Ind...GDP,
+                fill=strong_economy))+
+  geom_boxplot(alpha=0.4)+
+  labs(x="Tipo de pais", y="Aporte economía naranja al PIB",
+       title="Aporte economia naranja en PIB paises LATAM con alto y bajo PIB percapita")+
+  theme(legend.position = "none")+
+  theme(panel.background = element_blank(), 
+        panel.grid = element_blank(),
+        panel.grid.minor = element_blank())
+
+
+####Boxplto EN internet####
+ggplot(df1, aes(x=strong_economy, y=Internet.penetration...population,
+                fill=strong_economy))+
+  geom_boxplot(alpha=0.4)+
+  labs(x="Tipo de pais", y="Penetración de internet %",
+       title="Penetración de internet en paises con alto y bajo PIB percapita")+
+  theme(legend.position = "none")+
+  theme(panel.background = element_blank(), 
+        panel.grid = element_blank(),
+        panel.grid.minor = element_blank())
+
+
+####Scatterplot con dos variables####
+ggplot(mtcars, aes(hp,mpg))+
+  geom_point()+
+  labs(x="Caballos de fuerza", y="Millas por galon",
+       title="Relacion caballos de fuerza y millas por galon")+
+  theme(legend.position = "none")+
+  theme(panel.background = element_blank(), 
+        panel.grid = element_blank(),
+        panel.grid.minor = element_blank())
+
+ggplot(mtcars, aes(wt,hp))+
+  geom_point()+
+  labs(x="Peso", y="Potencia",
+       title="Relacion peso y potencia")+
+  theme(legend.position = "none")+
+  theme(panel.background = element_blank(), 
+        panel.grid = element_blank(),
+        panel.grid.minor = element_blank())
+
+ggplot(mtcars, aes(hp,qsec))+
+  geom_point(aes(color=am, size=cyl))+
+  labs(x="Caballos de fuerza", y="Tiempo cuarto de milla",
+       title="Caballos velocidad segun cilindraje y tipo de caja")
   
   
+
+
+
+
+
+
