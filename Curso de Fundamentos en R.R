@@ -251,6 +251,8 @@ ggplot(df1, aes(x=strong_economy, y=Internet.penetration...population,
 
 
 ####Scatterplot con dos variables####
+#### EDA con gglplot, plotly, scarttplot####
+
 ggplot(mtcars, aes(hp,mpg))+
   geom_point()+
   labs(x="Caballos de fuerza", y="Millas por galon",
@@ -273,9 +275,195 @@ ggplot(mtcars, aes(hp,qsec))+
   geom_point(aes(color=am, size=cyl))+
   labs(x="Caballos de fuerza", y="Tiempo cuarto de milla",
        title="Caballos velocidad segun cilindraje y tipo de caja")
-  
-  
 
+ggplot(df1, aes(Internet.penetration...population,Creat.Ind...GDP))+
+  geom_point(aes(color=factor(strong_economy), size=GDP.Growth..))+
+  labs(x="Penetración Internet", y="Aporte economia naranja al PIB",
+       title="Internet y aporte EN segun economia y crecimiento PIB")
+
+ggplot(df1, aes(Education.invest...GDP,Unemployment))+
+  geom_point(aes(color=factor(strong_economy), size=X..pop.below.poverty.line))+
+  labs(x="Inversión en educación % PIB", y="Desempleo",
+       title="Inversion en Educación y Desempleo según factor de Economía y población por debajo de la linea de pobreza")
+
+install.packages("ggplot2")
+library(ggplot2)
+install.packages("plotly")
+library(plotly)
+
+my_graph <- ggplot(df1, aes(Internet.penetration...population,
+                            Creat.Ind...GDP,rownames(df1)))+
+  geom_point()+
+  labs(x="Penetración Internet", y="Aporte economia naranja al PIB",
+       title="Internet y aporte EN segun economia y crecimiento PIB")
+p = ggplotly(my_graph)
+p
+
+####Las estadistica de los datos####
+
+#### EDA con libreria dplyr y medidas de tendencia central####
+#Utilizandao librery dplyr and pairs#
+
+pairs(mtcars[,2:6])
+
+newdata <- subset(mtcars, select = c(2,7:8,11,12))
+pairs(newdata)
+
+pairs(mtcars[,-c(1,3,4,5,6,9,10)])
+
+#Utilizando librery dplyr and filtter#
+
+install.packages("dplyr")
+library(dplyr)
+attach(mtcars)
+Eficient <- filter(mtcars, mpg >= 30)
+Eficient
+pairs(Eficient[,2:6])
+
+#utilizando librery stringr#
+install.packages("stringr")
+library(stringr)
+
+merc <- mtcars %>%
+  filter(str_detect(model,"Merc"))
+merc
+
+cor(mtcars[,2:6])
+cor(newdata)
+
+View(df1)
+pairs(df1[,2:6])
+pairs(df1[,5:10])
+
+newdata1 <- subset(df1, select = c(5,6,10,11,12,13))
+newdata1
+pairs(newdata1)
+
+
+#Correlaciones Economia naranja#
+
+cor(df1[,2:6])
+cor(df1[,2:6], use = "complete.obs")
+cor(df1[,5:10], use = "complete.obs")
+cor(newdata1, use = "complete.obs")
+
+
+#Medidad de tendencia central#
+
+summary(mtcars)
+sd(mtcars$mpg)
+mean(mtcars$mpg)
+prom <- mean(mtcars$mpg)
+desv <- sd(mtcars$mpg)
+cv <- (desv/prom)*100
+cv
+
+desvdf1 <- sd(df1$Internet.penetration...population)
+promdf1 <- mean(df1$Internet.penetration...population)
+cvdf1 <- (desvdf1/promdf1)*100
+cvdf1
+summary(df1)
+
+mean(df1$Creat.Ind...GDP)
+mean(df1$Creat.Ind...GDP, na.rm = TRUE)
+sd(df1$Creat.Ind...GDP)
+sd(df1$Creat.Ind...GDP, na.rm = TRUE)
+prom1 <- mean(df1$Creat.Ind...GDP, na.rm = TRUE)
+sd1 <- sd(df1$Creat.Ind...GDP, na.rm = TRUE)
+cv1 <- (sd1/prom1)*100
+
+
+####Ajustando datos para mejorar las visualizaciones####
+
+eficientes <- mean(mtcars$mpg)
+eficientes
+mtcars <- mtcars %>%
+  mutate(mas_eficientes = ifelse(mpg < eficientes,
+                               "Bajo promedio", "en o Sobre promedio"))
+
+mas_veloces <- mtcars[mtcars$qsec<16,]
+mas_veloces
+
+mtcars <- mtcars  %>%
+  mutate(vel_qmilla = ifelse(qsec < 16,
+                               "Menos de 16 seg", "Mas de 16 seg"))
+
+mtcars <- mtcars  %>%
+  mutate(peso_kilos = (wt/2)*1000)
+
+mtcars <- mtcars  %>%
+  mutate(peso=ifelse(peso_kilos <= 1500,
+                     "Livianos", "Pesados"))
+
+df1 <- df1 %>%
+  mutate(creci_GDP = ifelse(GDP.Growth.. >= 2.5,
+                            "2.5% o más", "Menos de 2.5%"))
+df1 <- df1 %>%
+  mutate(mas_naranja = ifelse(Creat.Ind...GDP >= 2.5,
+                            "Más naranjas", "Menos naranjas"))
+
+#Ranking#
+
+df1 %>%
+  arrange(desc(Creat.Ind...GDP))
+
+top_naranjas <- df1 %>%
+  filter(Country %in% c("Mexico", "Panama", "Paraguay", "Argentina",
+                        "Colombia", "Brazil")) 
+
+top_naranjas %>%
+  arrange(desc(Creat.Ind...GDP))
+
+mtcars %>%
+  arrange(desc(peso_kilos))
+
+mas_pesados <- mtcars %>%
+  filter(model %in% c("Lincoln Continental","Chrysler Imperial",
+                     "Cadillac Fleetwood","Merc 450SE"))
+mas_pesados
+
+ggplot(mas_pesados, aes(x=hp,y=mpg))+
+  geom_point()+
+  facet_wrap(~model)
+
+
+ggplot(mtcars, aes(x=cyl, y=mpg, size=peso))+
+  geom_point()+
+  facet_wrap(~ am)
+
+##Reto##
+ggplot(mtcars, aes(x=cyl, y=mpg, size=peso_kilos))+
+  geom_point()+
+  facet_wrap(~ am)
+
+
+ggplot(top_naranjas, aes(x = Internet.penetration...population,
+                        y = Services...GDP, size = GDP.PC))+
+  geom_point()+
+  facet_wrap(~Country)
+
+
+ggplot(top_naranjas, aes(x=Education.invest...GDP,
+                        y=Creat.Ind...GDP, size=Unemployment))+
+  geom_point()+
+  facet_wrap(~Country)
+
+myColors <- brewer.pal(9,"Reds")
+
+ggplot(top_naranjas, aes(x=Internet.penetration...population,
+                        y=GDP.PC, fill=Creat.Ind...GDP))+
+  geom_tile()+
+  facet_wrap(~Country)+
+  scale_fill_gradientn(colors=myColors)
+
+
+####Cierre####
+
+cajas <- c(1,2,3,4,5,6,7,8)
+tiempo <- c(10,9,8,5,8,6,3,1,8,1)
+plot(tiempo-cajas)
+plot(df1$Services...GDP ~ df1$Education.invest...GDP)
+plot(mtcars$mpg~mtcars$am)
 
 
 
